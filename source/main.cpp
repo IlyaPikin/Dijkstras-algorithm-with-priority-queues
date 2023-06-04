@@ -39,7 +39,7 @@ bool compare(int n, vector<int>& dist1, vector<int>& dist2, vector<int>& up1, ve
 }
 
 void test_binomial() {
-	BinomialHeap bheap;
+	BinomialHeap bheap(5);
 	bheap.insert(0, 10);
 	bheap.insert(1, 18);
 	bheap.insert(2, 25);
@@ -58,7 +58,7 @@ void ex1()
 {
 	// ---------------- 1st experiment ----------------
 
-	ofstream ex1("..\\experiments\\ex1\\ex1_2.csv");
+	ofstream ex1("C:\\Users\\Илья\\source\\repos\\deeplom\\deeplom\\experiments\\ex1\\ex1_2.csv");
 	//ostream& ex1 = cout;
 
 	ex1 << fixed;

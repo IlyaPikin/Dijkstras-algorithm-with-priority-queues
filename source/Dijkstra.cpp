@@ -58,7 +58,7 @@ void dijkstra_binomial_heap(Graph& graph, vector<int>& dist, vector<int>& pred,
     // Так как индексация вершин графа начинается с нуля, а не с 1, уменьшим s
     s--;
 
-    BinomialHeap heap;
+    BinomialHeap heap(n);
 
     // Инициализация
     for (int i = 0; i < n; i++)

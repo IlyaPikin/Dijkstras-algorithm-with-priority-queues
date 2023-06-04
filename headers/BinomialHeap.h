@@ -2,7 +2,7 @@
 #ifndef BINOMIALHEAP_H
 #define BINOMIALHEAP_H
 
-#include <map>
+#include <vector>
 #include <stack>
 
 using namespace std;
@@ -28,11 +28,11 @@ private:
 
 	int n;
 	Node* head;
-	map<int, Node*> LocationInHeap;
+	static vector<Node*> LocationInHeap;
 
 public:
 
-	BinomialHeap();
+	BinomialHeap(int max_n);
 
 	int get_size();
 	void get_min(int& min_name, int& min_key) const;
@@ -45,10 +45,10 @@ public:
 	void extract_min(int& min_name, int& min_key);
 	void decrease_key(int name, int new_key);
 
-	void heap_union(BinomialHeap h1);
-
 private:
 
+	BinomialHeap();
+	void heap_union(BinomialHeap h1);
 	static void link_trees(Node* node1, Node* node2);
 	void initializeNode(Node* nodePtr, int name, int key);
 	void swap_data(Node* node1, Node* node2);

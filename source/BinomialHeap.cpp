@@ -1,10 +1,20 @@
 // Copyright 2023 Pikin Ilya
 #include "../headers/BinomialHeap.h"
 
+
+vector<Node*> BinomialHeap::LocationInHeap;
+
 BinomialHeap::BinomialHeap()
 {
 	n = 0;
 	head = nullptr;
+}
+
+BinomialHeap::BinomialHeap(int max_n)
+{
+	n = 0;
+	head = nullptr;
+	LocationInHeap.resize(max_n, nullptr);
 }
 
 int BinomialHeap::get_size()
@@ -39,6 +49,8 @@ void BinomialHeap::get_min(int& min_name, int& min_key) const
 
 int BinomialHeap::get_key(int name)
 {
+	if (name < 0 || name >= LocationInHeap.size())
+		return -1;
 	Node* nodePtr = LocationInHeap[name];
 	if (nodePtr == nullptr)
 		return -1;
@@ -53,6 +65,8 @@ bool BinomialHeap::empty()
 
 void BinomialHeap::insert(int name, int key)
 {
+	if (name < 0 || name >= LocationInHeap.size())
+		return;
 	if (key < 0)
 		return;
 
@@ -62,14 +76,19 @@ void BinomialHeap::insert(int name, int key)
 
 	h.head = nodePtr;
 	h.n++;
-	h.LocationInHeap[name] = nodePtr;
+	LocationInHeap[name] = nodePtr;
 
 	heap_union(h);
 }
 
 void BinomialHeap::delete_element(int name)
 {
+	if (name < 0 || name >= LocationInHeap.size())
+		return;
+
 	Node* nodePtr = LocationInHeap[name];
+	if (nodePtr == nullptr)
+		return;
 	nodePtr->key = INT_MIN;
 
 	Node* node1 = nodePtr;
@@ -140,8 +159,8 @@ void BinomialHeap::delete_min()
 	int k = min_el->degree;
 	k = 1 << k;
 
-	// Удаление мин узла
-	LocationInHeap.erase(min_name);
+	// Удаление мин узла из кучи
+	LocationInHeap[min_name] = nullptr;
 	n -= k;
 
 	// Удаление указателей дочерних узлов из LocationInHeap не требуется,
@@ -249,8 +268,8 @@ void BinomialHeap::extract_min(int& min_name, int& min_key)
 	int k = min_el->degree;
 	k = 1 << k;
 
-	// Удаление мин узла
-	LocationInHeap.erase(min_name);
+	// Удаление мин узла из кучи
+	LocationInHeap[min_name] = nullptr;
 	n -= k;
 
 	// Удаление указателей дочерних узлов из LocationInHeap не требуется,
@@ -305,8 +324,11 @@ void BinomialHeap::extract_min(int& min_name, int& min_key)
 
 void BinomialHeap::decrease_key(int name, int new_key)
 {
+	if (name < 0 || name >= LocationInHeap.size())
+		return;
+
 	Node* nodePtr = LocationInHeap[name];
-	if (nodePtr == nullptr || new_key >= nodePtr->key || new_key < 0)
+	if (nodePtr == nullptr || new_key < 0 || new_key >= nodePtr->key)
 		return;
 	nodePtr->key = new_key;
 
@@ -327,6 +349,7 @@ void BinomialHeap::decrease_key(int name, int new_key)
 	}
 }
 
+
 void BinomialHeap::heap_union(BinomialHeap h1)
 {
 	// Обработка случаев с пустыми кучами
@@ -334,7 +357,7 @@ void BinomialHeap::heap_union(BinomialHeap h1)
 	{
 		n = h1.n;
 		head = h1.head;
-		LocationInHeap.insert(h1.LocationInHeap.begin(), h1.LocationInHeap.end());
+		//LocationInHeap.insert(h1.LocationInHeap.begin(), h1.LocationInHeap.end());
 		return;
 	}
 	else if (h1.head == nullptr)
@@ -384,7 +407,6 @@ void BinomialHeap::heap_union(BinomialHeap h1)
 		next = curr->sibling;
 	}
 }
-
 
 void BinomialHeap::link_trees(Node* node1, Node* node2)
 {
@@ -476,6 +498,6 @@ void BinomialHeap::heap_merge(BinomialHeap& h1)
 	}
 
 	// Слияние имен и указателей в LocationInHeap, увеличение кол-ва узлов итоговой кучи
-	LocationInHeap.insert(h1.LocationInHeap.begin(), h1.LocationInHeap.end());
+	//LocationInHeap.insert(h1.LocationInHeap.begin(), h1.LocationInHeap.end());
 	n += h1.n;
 }
