@@ -119,7 +119,7 @@ void Graph::generate_rand_graph(uint n_, uint m_, uint q, uint r)
 {
 	if (m_ >= n_ * (n_ - 1))
 	{
-		cout << "Too many edges!";
+		cout << "Too many edges!\n";
 		generate_full_graph(n_, q, r);
 		return;
 	}
@@ -144,11 +144,13 @@ void Graph::generate_rand_graph(uint n_, uint m_, uint q, uint r)
 	// Создаём равномерное распределение в диапозоне [0,n-1] для генерации индекса вершины
 	uniform_int_distribution<uint> index_distribution(0, n - 1);
 
+
+	// New code here
+	vector<vector<uint>> matrix(n, vector<uint>(n));
 	uint count = 0;
+
 	while (count != m)
 	{
-		// Вычисляем псевдослучайное число: вызовем распределение как функцию,
-		// передав генератор произвольных целых чисел как аргумент.
 		uint weight = weight_distribution(engine);
 		uint index = index_distribution(engine);
 		uint name = 0;
@@ -157,41 +159,97 @@ void Graph::generate_rand_graph(uint n_, uint m_, uint q, uint r)
 			name = index_distribution(engine);
 		} while (name == index);
 
-		vtype** prev_ptr = &ADJ[index];
-
-		// Вставка в список смежности с проверкой кратности ребра 
-		while (true)
+		if (matrix[index][name] == 0)
 		{
-			vtype* curr_el = *prev_ptr;
-
-			if (curr_el == nullptr)
+			matrix[index][name] = weight;
+			count++;
+		}
+		else
+		{
+			uint i = index, j = name + 1;
+			while (true)
 			{
-				vtype* new_edge = new vtype(name + 1, weight, nullptr);
-				*prev_ptr = new_edge; // добавляем адрес нового элемента в старый
-				count++;
-				break;
-			}
-			else
-			{
-				if (curr_el->name == name + 1)
+				if (j == n)
 				{
-					break;
+					j = 0;
+					i = (i + 1) % n;
 				}
-				else if (curr_el->name < name + 1)
-				{
-					prev_ptr = &(curr_el->next); // обновляем адрес указателя на следующий элемент
 
-				}
-				else // curr_el->name > name + 1
+				if (matrix[i][j] == 0 && i != j)
 				{
-					vtype* new_edge = new vtype(name + 1, weight, curr_el);
-					*prev_ptr = new_edge; // добавляем адрес нового элемента в предыдущий
+					matrix[i][j] = weight;
 					count++;
 					break;
 				}
+				j++;
 			}
 		}
 	}
+
+	for (uint i = 0; i < n; i++)
+	{
+		vtype** prev_ptr = &ADJ[i];
+		for (uint j = 0; j < n; j++)
+		{
+			if (matrix[i][j] != 0 && i != j)
+			{
+				vtype* new_edge = new vtype(j + 1, matrix[i][j], nullptr);
+				*prev_ptr = new_edge; // добавляем адрес нового элемента в старый
+				prev_ptr = &(new_edge->next);
+			}
+		}
+	}
+
+	// Old code here
+	//uint count = 0;
+	//while (count != m)
+	//{
+	//	// Вычисляем псевдослучайное число: вызовем распределение как функцию,
+	//	// передав генератор произвольных целых чисел как аргумент.
+	//	uint weight = weight_distribution(engine);
+	//	uint index = index_distribution(engine);
+	//	uint name = 0;
+	//	do
+	//	{
+	//		name = index_distribution(engine);
+	//	} while (name == index);
+	//
+	//	vtype** prev_ptr = &ADJ[index];
+	//
+	//	// Вставка в список смежности с проверкой кратности ребра 
+	//	while (true)
+	//	{
+	//		vtype* curr_el = *prev_ptr;
+	//
+	//		if (curr_el == nullptr)
+	//		{
+	//			vtype* new_edge = new vtype(name + 1, weight, nullptr);
+	//			*prev_ptr = new_edge; // добавляем адрес нового элемента в старый
+	//			count++;
+	//			break;
+	//		}
+	//		else
+	//		{
+	//			if (curr_el->name == name + 1)
+	//			{
+	//				break;
+	//			}
+	//			else if (curr_el->name < name + 1)
+	//			{
+	//				prev_ptr = &(curr_el->next); // обновляем адрес указателя на следующий элемент
+	//
+	//			}
+	//			else // curr_el->name > name + 1
+	//			{
+	//				vtype* new_edge = new vtype(name + 1, weight, curr_el);
+	//				*prev_ptr = new_edge; // добавляем адрес нового элемента в предыдущий
+	//				count++;
+	//				break;
+	//			}
+	//		}
+	//	}
+	//}
+
 }
 void Graph::generate_full_graph(uint n_, uint q, uint r)
 {
