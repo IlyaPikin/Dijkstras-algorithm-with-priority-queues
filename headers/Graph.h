@@ -63,6 +63,8 @@ public:
 		size_t n, size_t d, int s);
 	friend void dijkstra_binomial_heap(Graph& graph, vector<int>& dist, vector<int>& pred,
 		size_t n, int s);
+	friend void dijkstra_fibonacci_heap(Graph& graph, vector<int>& dist, vector<int>& pred,
+		size_t n, int s);
 };
 
 

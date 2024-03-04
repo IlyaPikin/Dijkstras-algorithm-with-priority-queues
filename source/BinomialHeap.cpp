@@ -350,7 +350,7 @@ void BinomialHeap::decrease_key(int name, int new_key)
 }
 
 
-void BinomialHeap::heap_union(BinomialHeap h1)
+void BinomialHeap::heap_union(BinomialHeap& h1)
 {
 	// Обработка случаев с пустыми кучами
 	if (head == nullptr && h1.head != nullptr)

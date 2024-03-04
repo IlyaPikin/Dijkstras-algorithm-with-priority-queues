@@ -48,7 +48,9 @@ public:
 private:
 
 	BinomialHeap();
-	void heap_union(BinomialHeap h1);
+	BinomialHeap(const BinomialHeap& other) = delete;
+	BinomialHeap& operator=(const BinomialHeap& other) = delete;
+	void heap_union(BinomialHeap& h1);
 	static void link_trees(Node* node1, Node* node2);
 	void initializeNode(Node* nodePtr, int name, int key);
 	void swap_data(Node* node1, Node* node2);

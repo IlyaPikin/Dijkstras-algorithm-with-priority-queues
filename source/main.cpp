@@ -7,6 +7,7 @@
 #include "../headers/Graph.h"
 #include "../headers/DHeap.h"
 #include "../headers/BinomialHeap.h"
+#include "../headers/FibonacciHeap.h"
 #include "../headers/Dijkstra.h"
 
 using namespace std;
@@ -38,7 +39,8 @@ bool compare(int n, vector<int>& dist1, vector<int>& dist2, vector<int>& up1, ve
 	return true;
 }
 
-void test_binomial() {
+void test_binomial()
+{
 	BinomialHeap bheap(5);
 	bheap.insert(0, 10);
 	bheap.insert(1, 18);
@@ -52,6 +54,23 @@ void test_binomial() {
 	bheap.extract_min(min_name, min_key);
 
 	bheap.get_min(min_name, min_key);
+}
+
+void test_fibonacci()
+{
+	FibonacciHeap fheap(100);
+	fheap.insert(0, 10);
+	fheap.insert(1, 18);
+	fheap.insert(2, 25);
+	fheap.insert(3, 12);
+	fheap.insert(4, 9);
+
+	fheap.decrease_key(2, 5);
+
+	int min_name, min_key;
+	fheap.extract_min(min_name, min_key);
+
+	fheap.get_min(min_name, min_key);
 }
 
 void ex1()
@@ -287,16 +306,85 @@ void cake_test()
 	compare(n, dist1, dist2, pred1, pred2);
 }
 
+void fib_test()
+{
+	cout << "Experimemt.\n";
+	auto START = std::chrono::steady_clock::now();
+
+	uint n = 1000000;
+	//uint m = n * n / 10;
+	uint m = n * (n - 100);
+	uint q = 1;
+	uint r = 1000'000;
+
+	cout << n << " " << m << " " << q << " " << r <<'\n';
+
+	Graph graph(n, m, q, r); // generate graph
+
+
+	//// Dijkstra's algorithm with d-heap
+
+	//vector<int> dist1(n);
+	//vector<int> pred1(n);
+
+	//auto start_d = std::chrono::steady_clock::now();
+	//dijkstra_d_heap(graph, dist1, pred1, n, 2, 1);
+	//auto end_d = std::chrono::steady_clock::now();
+	//std::chrono::duration<double> elapsed_seconds_d = end_d - start_d;
+
+	//cout << "d-heap: " << elapsed_seconds_d.count() << '\n';
+	////ex1 << ";" << elapsed_seconds_d.count() << endl;
+
+
+
+	// Dijkstra's algorithm with binomial heap
+
+	vector<int> dist2(n);
+	vector<int> pred2(n);
+
+	auto start_b = std::chrono::steady_clock::now();
+	dijkstra_binomial_heap(graph, dist2, pred2, n, 1);
+	auto end_b = std::chrono::steady_clock::now();
+	std::chrono::duration<double> elapsed_seconds_b = end_b - start_b;
+
+	cout << "Binomial heap: " << elapsed_seconds_b.count() << endl;
+
+	// Dijkstra's algorithm with binomial heap
+
+	vector<int> dist3(n);
+	vector<int> pred3(n);
+
+	auto start_f = std::chrono::steady_clock::now();
+	dijkstra_fibonacci_heap(graph, dist3, pred3, n, 1);
+	auto end_f = std::chrono::steady_clock::now();
+	std::chrono::duration<double> elapsed_seconds_f = end_f - start_f;
+
+	cout << "Fibonacci heap: " << elapsed_seconds_f.count() << endl;
+
+	if (!compare(n, dist3, dist2, pred3, pred2))
+	{
+		system("pause");
+	}
+
+	auto END = std::chrono::steady_clock::now();
+	std::chrono::duration<double> TIME = END - START;
+	cout << TIME.count() << " seconds\n";
+
+}
+
 int main() {
 	// Настройка вывода вещественный чисел с символом запятой
 	locale loccomma(cout.getloc(), new comma);
 	locale::global(loccomma);
 
 	//test_binomial();
+	//test_fibonacci();
+	fib_test();
+	
 	//cake_test();
 
-	Graph cake(10, 18, 1, 10);
-	cake.print_to_console();
+	//Graph cake(10, 18, 1, 10);
+	//cake.print_to_console();
 
 	//ex1();
 	//ex2();
